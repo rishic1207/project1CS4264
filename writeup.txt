@@ -96,3 +96,5 @@ What to submit Two Python 3.x scripts named good.py and evil.py that have the sa
 hash, have different SHA-256 hashes, and print the specified messages.
 
 c) what is the point of the prefix in the scripts if its commented
+
+d) i keep getting these syntax errors, what am i supposed to do? give me a walkthrough of steps and explain each step
