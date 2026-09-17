@@ -98,3 +98,5 @@ hash, have different SHA-256 hashes, and print the specified messages.
 c) what is the point of the prefix in the scripts if its commented
 
 d) i keep getting these syntax errors, what am i supposed to do? give me a walkthrough of steps and explain each step
+
+e) why are you using latin-1 instead of utf-8 like the instructiosn said? is there like some kind of performance thing i should know about? also why is it #!/usr/bin/env python3 instead of #!/usr/bin/python?
