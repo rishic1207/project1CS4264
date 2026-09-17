@@ -1,7 +1,7 @@
 1. The MD5(password || message) part is vulnerable to length extension because an attacker can keep hashing from the known MD5 state. HMAC can patch this vulnerability by hashing the message inside a second keyed hash, so that the attacker can't extend the message and create a valid token without knowing the password.
 2. If two different programs have the same MD5 hash, a digital signature on the normal program can also verify for the harmful one. That means an attacker could make a program that they tweaked appear trusted even though it behaves differently.
 3. With e >= 2^16 + 1 such as 65537, the attacker can't use the simple low exponent root trick to create a forged signature with the required padding format, since Bleichenbacher's attack only works best with really small RSA exponents. If the e is a smaller value like 5, then it makes RSA's mathematical structure a lot easier to exploit.
-4. ChatGPT
+4. ChatGPT, Claude
 Prompts:
 
 a) can you explain what bleichenbacher's attack is in simple terms. im trying to answer this question so like explain the attack so i can figure it out: Since 2010, NIST has specified that RSA public exponents (e) should be at least 2
@@ -100,3 +100,75 @@ c) what is the point of the prefix in the scripts if its commented
 d) i keep getting these syntax errors, what am i supposed to do? give me a walkthrough of steps and explain each step
 
 e) why are you using latin-1 instead of utf-8 like the instructiosn said? is there like some kind of performance thing i should know about? also why is it #!/usr/bin/env python3 instead of #!/usr/bin/python?
+
+
+Prompt: 
+Can you help me implement part 1, I understand the premise of the attack but I'm a little confused on how to implement it
+
+Prompt:
+import http.client as httplib from urllib.parse import urlparse import sys url = sys.argv[1] # Your code to modify url goes here parsedUrl = urlparse.urlparse(url) conn = httplib.HTTPSConnection(parsedUrl.hostname,parsedUrl.port) conn.request("GET", parsedUrl.path + "?" + parsedUrl.query) print(conn.getresponse().read())
+are you following this from the pdf?
+also this is pymd5.py:
+
+Prompt:
+how can i test this
+
+Prompt:
+okay so how do i test this code offline and then on the server itself?
+
+Prompt:
+i think you gave me the wrong command for python, in the future remember to use py instead of python
+
+Prompt:
+PS C:\Users\email\Documents\CS4264> py len_ext_attack.py http://courses.cs.vt.edu/cs4264/project1/     
+Traceback (most recent call last):
+  File "C:\Users\email\Documents\CS4264\len_ext_attack.py", line 51, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\email\Documents\CS4264\len_ext_attack.py", line 20, in main
+    token_part, signed_suffix = query.split("&", 1)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: not enough values to unpack (expected 2, got 1)
+
+im getting this error message, can you help me debug
+
+Prompt:
+the url is giving me no response, can you check as to why this is happening. maybe check if the server is redirecting it to https instead of http? its hanging right Now
+
+Prompt:
+okay i got the success message, now im trying to implement part3
+
+Prompt:
+how can i test this
+
+Prompt:
+PS C:\Users\email\Documents\CS4264> openssl rsa -in key.pub -pubin -text -noout
+openssl : The term 'openssl' is not recognized as the name of a cmdlet, function, script file, or operable program. Check the spelling of the name, or if a path was included, 
+verify that the path is correct and try again.
+At line:1 char:1
++ openssl rsa -in key.pub -pubin -text -noout
++ ~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (openssl:String) [], CommandNotFoundException
+    + FullyQualifiedErrorId : CommandNotFoundException
+
+Prompt:
+ive downloaded it and used the command to download it and its just not working, i want to get openssl to work so i can use it for later
+
+Prompt:
+MIIBIDANBgkqhkiG9w0BAQEFAAOCAQ0AMIIBCAKCAQEAsGAEs1KL/S0Yf0jmy58/
+55r63mzDxCjdBXe4uz51KCS2MtEA0os5Zyaoh8UYne0/6XF9lZcw2tv0aLK8du6j
+wVCRo4th/fpGsVEO+IXqMQWufX8wB+l8Z2G8R+cVujJGTHf30M/SyIwPU9RUBKEQ
+1pUdP0JV7cNSOSEjeobzX+0gDH5FhwuCLXZS3IltDeBkYX27SOubHUcQPxKRGw2r
+PZHg/bhH8Lh88rILGdO5UcrobKthGJP29M0BbGhgfpcPwtuAD5gdm7REH+XXAplp
+OorlHy6bJlbwwnm/h+y5anU/Ixc56x+anX3QHxXyg90tooh+f972rt1hxMp7O+Gx
+zQIBAw==
+openssl just wont work
+
+Prompt:
+so this is the website, basically the string im using is just the pids with + and the number
+
+Prompt:
+it was invalid
+
+Prompt:
+Nevermind, i just entered the wrong dollar amount. it works now
