@@ -1,0 +1,98 @@
+1. The MD5(password || message) part is vulnerable to length extension because an attacker can keep hashing from the known MD5 state. HMAC can patch this vulnerability by hashing the message inside a second keyed hash, so that the attacker can't extend the message and create a valid token without knowing the password.
+2. If two different programs have the same MD5 hash, a digital signature on the normal program can also verify for the harmful one. That means an attacker could make a program that they tweaked appear trusted even though it behaves differently.
+3. With e >= 2^16 + 1 such as 65537, the attacker can't use the simple low exponent root trick to create a forged signature with the required padding format, since Bleichenbacher's attack only works best with really small RSA exponents. If the e is a smaller value like 5, then it makes RSA's mathematical structure a lot easier to exploit.
+4. ChatGPT
+Prompts:
+
+a) can you explain what bleichenbacher's attack is in simple terms. im trying to answer this question so like explain the attack so i can figure it out: Since 2010, NIST has specified that RSA public exponents (e) should be at least 2
+16 + 1.
+Briefly explain why Bleichenbacher’s attack would not work for these keys
+
+b) i was able to do 2.1 fine but im a little confused on 2.2. can you give me a walkthrough of steps i can follow, and explain what exactly is going on. these are the directions i was given overall 
+Part 2. MD5 Collisions
+MD5 was once the most widely used cryptographic hash function, but today it is considered
+dangerously insecure. This is because cryptanalysts have discovered efficient algorithms for finding
+collisions—pairs of messages with the same MD5 hash value.
+The first known collisions were announced on August 17, 2004, by Xiaoyun Wang, Dengguo Feng,
+Xuejia Lai, and Hongbo Yu. Here’s one pair of colliding messages they published:
+Message 1:
+d131dd02c5e6eec4693d9a0698aff95c 2fcab58712467eab4004583eb8fb7f89
+55ad340609f4b30283e488832571415a 085125e8f7cdc99fd91dbdf280373c5b
+d8823e3156348f5bae6dacd436c919c6 dd53e2b487da03fd02396306d248cda0
+e99f33420f577ee8ce54b67080a80d1e c69821bcb6a8839396f9652b6ff72a70
+4
+Message 2:
+d131dd02c5e6eec4693d9a0698aff95c 2fcab50712467eab4004583eb8fb7f89
+55ad340609f4b30283e4888325f1415a 085125e8f7cdc99fd91dbd7280373c5b
+d8823e3156348f5bae6dacd436c919c6 dd53e23487da03fd02396306d248cda0
+e99f33420f577ee8ce54b67080280d1e c69821bcb6a8839396f965ab6ff72a70
+Convert each group of hex strings into a binary file.
+(On Linux, run $ xxd -r -p file.hex > file.)
+1. What are the MD5 hashes of the two binary files? Verify that they’re the same.
+($ openssl dgst -md5 file1 file2)
+2. What are their SHA-256 hashes? Verify that they’re different.
+($ openssl dgst -sha256 file1 file2)
+This component is intended to introduce you to MD5 collisions; you will not submit anything for it.
+2.1 Generating Collisions Yourself
+In 2004, Wang’s method took more than 5 hours to find a collision on a desktop PC. Since then,
+researchers have introduced vastly more efficient collision finding algorithms. You can compute
+your own MD5 collisions using a tool written by Marc Stevens that uses a more advanced technique.
+You can download the fastcoll tool here:
+http://www.win.tue.nl/hashclash/fastcoll_v1.0.0.5.exe.zip (Windows executable) or
+http://www.win.tue.nl/hashclash/fastcoll_v1.0.0.5-1_source.zip (source code)
+If you are building fastcoll from source, you can compile using this makefile: http://courses.
+cs.vt.edu/cs4264/static/project1/Makefile. You will also need the Boost libraries. On
+Ubuntu, you can install these using apt-get install libboost-all-dev. On OS X, you can
+install Boost via the Homebrew package manager using brew install boost.
+1. Generate your own collision with this tool. How long did it take?
+($ time fastcoll -o file1 file2)
+2. What are your files? To get a hex dump, run $ xxd -p file.
+3. What are their MD5 hashes? Verify that they’re the same.
+4. What are their SHA-256 hashes? Verify that they’re different.
+5
+What to submit A text file named generating_collisions.txt containing your answers.
+Format your file using this template. Make sure to follow the format precisely as this part is
+autograded:
+# Question 1
+time_for_fastcoll (e.g. 3.456s)
+# Question 2
+file1:
+file1_hex_dump
+file2:
+file2_hex_dump
+# Question 3
+md5_hash
+# Question 4
+file1:
+file1_sha256_hash
+file2:
+file2_sha256_hash
+2.2 A Hash Collision Attack
+The collision attack lets us generate two messages with the same MD5 hash and any chosen
+(identical) prefix. Due to MD5’s length-extension behavior, we can append any suffix to both
+messages and know that the longer messages will also collide. This lets us construct files that differ
+only in a binary “blob” in the middle and have the same MD5 hash, i.e. prefix ∥ blobA ∥ suffix and
+prefix ∥ blobB ∥ suffix.
+We can leverage this to create two programs that have identical MD5 hashes but wildly different
+behaviors. We’ll use Python, but almost any language would do. Put the following three lines into a
+file called prefix:
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
+blob = """
+and put these three lines into a file called suffix:
+"""
+from hashlib import sha256
+print(sha256(blob.encode('utf-8')).hexdigest())
+Now use fastcoll to generate two files with the same MD5 hash that both begin with prefix.
+($ fastcoll -p prefix -o col1 col2). Then append the suffix to both ($ cat col1 suffix
+6
+> file1.py; cat col2 suffix > file2.py). Verify that file1.py and file2.py have the
+same MD5 hash but generate different output.
+Extend this technique to produce another pair of programs, good and evil, that also share the
+same MD5 hash. One program should execute a benign payload: print "I come in peace."
+The second should execute a pretend malicious payload: print "Prepare to be destroyed!".
+Note that we may rename these program before grading them.
+What to submit Two Python 3.x scripts named good.py and evil.py that have the same MD5
+hash, have different SHA-256 hashes, and print the specified messages.
+
+c) what is the point of the prefix in the scripts if its commented
